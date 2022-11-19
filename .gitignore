@@ -52,6 +52,8 @@ _configtest.c
 *.tbz2
 *.tgz
 *.zip
+# Nix builds 
+result
 
 # Python files #
 ################
