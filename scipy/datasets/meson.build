@@ -10,5 +10,3 @@ py3.install_sources(
   python_sources,
   subdir: 'scipy/datasets'
 )
-
-subdir('tests')
