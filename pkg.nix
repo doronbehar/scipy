@@ -8,7 +8,7 @@
 , python
 , pythonOlder
 , buildPythonPackage
-, substituteAll
+, ninja
 , cython
 , gfortran
 , meson
@@ -92,7 +92,7 @@ in buildPythonPackage {
   '';
   # NIX_DEBUG=6;
 
-  nativeBuildInputs = [ cython gfortran meson-python pythran pkg-config wheel ];
+  nativeBuildInputs = [ ninja cython gfortran meson-python pythran pkg-config wheel ];
 
   buildInputs = [
     numpy.blas
