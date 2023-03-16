@@ -39,6 +39,8 @@ let
     numpy-include-dir = '${numpy}/${python.sitePackages}/numpy/core/include'
     pybind11-include-dir = '${pybind11}/${python.sitePackages}/pybind11/include'
     pythran-include-dir = '${pythran}/${python.sitePackages}/pythran'
+    host-python-path = '${python.interpreter}'
+    host-python-version = '${python.pythonVersion}'
 
     [host_machine]
     system = '${stdenv.targetPlatform.parsed.kernel.name}'
