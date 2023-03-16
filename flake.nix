@@ -61,17 +61,20 @@
           inherit nativeBuildInputs buildInputs propagatedBuildInputs checkInputs;
         };
       };
+      # Build each package with:
+      #
+      #     nix build -L .?submodules=1\#$PKG
       packages = {
-        # Build with:
-        #
-        #     nix build -L .?submodules=1\#scipy
         scipy = pkgs.python3.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
         });
-        # Build with:
-        #
-        #     nix build -L .?submodules=1\#scipy-armv7l-hf-multiplatform
         scipy-armv7l-hf-multiplatform = pkgs.pkgsCross.armv7l-hf-multiplatform.python3.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
         });
+        pythonEnv = pkgs.python3.withPackages(ps: [
+          self.packages.${system}.scipy
+        ]);
+        pythonEnv-armv7l-hf-multiplatform = pkgs.pkgsCross.armv7l-hf-multiplatform.python3.withPackages(ps: [
+          self.packages.${system}.scipy-armv7l-hf-multiplatform
+        ]);
       };
     }
   );
