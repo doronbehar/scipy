@@ -36,6 +36,9 @@ let
   crossFile = writeText "cross-file.conf" ''
     [properties]
     needs_exe_wrapper = ${lib.boolToString (!stdenv.buildPlatform.canExecute stdenv.hostPlatform)}
+    numpy-include-dir = '${numpy}/${python.sitePackages}/numpy/core/include'
+    pybind11-include-dir = '${pybind11}/${python.sitePackages}/pybind11/include'
+    pythran-include-dir = '${pythran}/${python.sitePackages}/pythran'
 
     [host_machine]
     system = '${stdenv.targetPlatform.parsed.kernel.name}'
