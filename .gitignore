@@ -53,7 +53,7 @@ _configtest.c
 *.tgz
 *.zip
 # Nix builds 
-result
+result*
 
 # Python files #
 ################
