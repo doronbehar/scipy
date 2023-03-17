@@ -171,6 +171,18 @@
           python
           python-armv7l-hf-multiplatform
         ;
+        # Debian packages
+        pythonEnv-deb-native = buildDeb {
+          pkg = self.packages.${system}.pythonEnv;
+          # TODO: Ideally we would parse `pkgs.stdenv.gcc.arch` or a similar
+          # attribute and use this argument such that dpkg-deb will be
+          # satisfied with our name of the platform.
+          targetArch = "amd64";
+        };
+        pythonEnv-deb-armv7l-hf-multiplatform = buildDeb {
+          pkg = self.packages.${system}.pythonEnv-armv7l-hf-multiplatform;
+          targetArch = "armhf";
+        };
       };
     }
   );
