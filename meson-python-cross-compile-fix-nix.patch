@@ -1,0 +1,12 @@
+diff --git i/mesonpy/__init__.py w/mesonpy/__init__.py
+index 3ea1325..d05b943 100644
+--- i/mesonpy/__init__.py
++++ w/mesonpy/__init__.py
+@@ -331,6 +331,7 @@ class _WheelBuilder():
+ 
+         stable = [x for x in abis if x and re.match(r'abi\d+', x)]
+         if len(stable) > 0 and len(stable) == len(abis) and all(x == stable[0] for x in stable[1:]):
++            print("@@@@ meson-python patch: " + stable[0])
+             return stable[0]
+         return None
+ 

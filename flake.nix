@@ -56,6 +56,21 @@
         pkgs.python3.pkgs.pytest-xdist
         pkgs.python3.pkgs.pooch
       ];
+      # Override python packages, see:
+      # https://github.com/mesonbuild/meson-python/issues/321
+      pythonOverrides = self: super: {
+        meson-python = super.meson-python.overridePythonAttrs(old: {
+          patches = [
+            ./meson-python-cross-compile-fix-nix.patch
+          ];
+        });
+      };
+      python = pkgs.python3.override {
+        packageOverrides = pythonOverrides;
+      };
+      python-armv7l-hf-multiplatform = pkgs.pkgsCross.armv7l-hf-multiplatform.python3.override {
+        packageOverrides = pythonOverrides;
+      };
     in {
       devShells = {
         default = pkgs.mkShell {
@@ -66,14 +81,14 @@
       #
       #     nix build -L .?submodules=1\#$PKG
       packages = {
-        scipy = pkgs.python3.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
+        scipy = python.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
         });
-        scipy-armv7l-hf-multiplatform = pkgs.pkgsCross.armv7l-hf-multiplatform.python3.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
+        scipy-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
         });
-        pythonEnv = pkgs.python3.withPackages(ps: [
+        pythonEnv = python.withPackages(ps: [
           self.packages.${system}.scipy
         ]);
-        pythonEnv-armv7l-hf-multiplatform = pkgs.pkgsCross.armv7l-hf-multiplatform.python3.withPackages(ps: [
+        pythonEnv-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.withPackages(ps: [
           self.packages.${system}.scipy-armv7l-hf-multiplatform
         ]);
       };
