@@ -1,12 +1,79 @@
 diff --git i/mesonpy/__init__.py w/mesonpy/__init__.py
-index 3ea1325..d05b943 100644
+index 3ea1325..3e7cfed 100644
 --- i/mesonpy/__init__.py
 +++ w/mesonpy/__init__.py
-@@ -331,6 +331,7 @@ class _WheelBuilder():
+@@ -106,12 +106,7 @@ def _init_colors() -> Dict[str, str]:
  
+ _STYLES = _init_colors()  # holds the color values, should be _COLORS or _NO_COLORS
+ 
+-
+-_EXTENSION_SUFFIXES = frozenset(importlib.machinery.EXTENSION_SUFFIXES)
+ _EXTENSION_SUFFIX_REGEX = re.compile(r'^\.(?:(?P<abi>[^.]+)\.)?(?:so|pyd|dll)$')
+-assert all(re.match(_EXTENSION_SUFFIX_REGEX, x) for x in _EXTENSION_SUFFIXES)
+-
+-
+ def _showwarning(
+     message: Union[Warning, str],
+     category: Type[Warning],
+@@ -209,14 +204,21 @@ class _WheelBuilder():
+     @property
+     def tag(self) -> mesonpy._tags.Tag:
+         """Wheel tags."""
++        print("@@@@ meson-python patch: reading `tag` property"))
+         if self.is_pure:
++            print("@@@@ meson-python patch: is pure")
++            print("@@@@ meson-python patch: returning " + mesonpy._tags.Tag('py3', 'none', 'any'))
+             return mesonpy._tags.Tag('py3', 'none', 'any')
+         if not self._has_extension_modules:
++            print("@@@@ meson-python patch: has extension modules")
++            print("@@@@ meson-python patch: returning " + mesonpy._tags.Tag('py3', 'none', None))
+             # The wheel has platform dependent code (is not pure) but
+             # does not contain any extension module (does not
+             # distribute any file in {platlib}) thus use generic
+             # implementation and ABI tags.
+             return mesonpy._tags.Tag('py3', 'none', None)
++        print("@@@@ meson-python patch: stable_abi is " + self._stable_abi)
++        print("@@@@ meson-python patch: returning " + mesonpy._tags.Tag(None, self._stable_abi, None))
+         return mesonpy._tags.Tag(None, self._stable_abi, None)
+ 
+     @property
+@@ -306,30 +308,22 @@ class _WheelBuilder():
+         and .so on other platforms) and, if they all share the same
+         PEP 3149 filename stable ABI tag, return it.
+ 
+-        All files that look like extension modules are verified to
+-        have a file name compatibel with what is expected by the
+-        Python interpreter. An exception is raised otherwise.
+-
+         Other files are ignored.
+ 
+         """
+-        soext = sorted(_EXTENSION_SUFFIXES, key=len)[0]
+         abis = []
+ 
+         for path, src in self._wheel_files['platlib']:
+-            if path.suffix == soext:
+-                match = re.match(r'^[^.]+(.*)$', path.name)
+-                assert match is not None
+-                suffix = match.group(1)
+-                if suffix not in _EXTENSION_SUFFIXES:
+-                    raise ValueError(
+-                        f'Extension module {str(path)!r} not compatible with Python interpreter. '
+-                        f'Filename suffix {suffix!r} not in {set(_EXTENSION_SUFFIXES)}.')
+-                match = _EXTENSION_SUFFIX_REGEX.match(suffix)
+-                assert match is not None
+-                abis.append(match.group('abi'))
+-
++            match = re.match(r'^[^.]+(.*)$', path.name)
++            assert match is not None
++            suffix = match.group(1)
++            match = _EXTENSION_SUFFIX_REGEX.match(suffix)
++            assert match is not None
++            abis.append(match.group('abi'))
++
++        print("@@@@ meson-python patch: " + abis)
          stable = [x for x in abis if x and re.match(r'abi\d+', x)]
++        print("@@@@ meson-python patch: " + stable)
          if len(stable) > 0 and len(stable) == len(abis) and all(x == stable[0] for x in stable[1:]):
-+            print("@@@@ meson-python patch: " + stable[0])
              return stable[0]
          return None
- 

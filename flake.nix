@@ -91,6 +91,7 @@
         pythonEnv-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.withPackages(ps: [
           self.packages.${system}.scipy-armv7l-hf-multiplatform
         ]);
+        meson-python = python.pkgs.meson-python;
       };
     }
   );
