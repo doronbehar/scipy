@@ -109,22 +109,13 @@ in buildPythonPackage {
 
   propagatedBuildInputs = [ numpy ];
 
-  # TODO: From some reason nativeCheckInputs doesn't work, see the sanity check
-  # at preConfigure. See also
-  # https://github.com/NixOS/nixpkgs/pull/206742/commits/f39abbc3500451fc00c80fed71b0f6f7bba8b6a4
-  checkInputs = [ nose pytest pytest-xdist ];
+  nativeCheckInputs = [ nose pytest pytest-xdist ];
 
   doCheck = !(stdenv.isx86_64 && stdenv.isDarwin);
 
   preConfigure = ''
     sed -i '0,/from numpy.distutils.core/s//import setuptools;from numpy.distutils.core/' setup.py
     export NPY_NUM_BUILD_JOBS=$NIX_BUILD_CORES
-  ''
-    # Sanity check for pytest availablity, done here so that a full build won't
-    # fail due to pytest not added to python's sys.path. Also, it demonstrates
-    # the issue with nativeCheckInputs
-  + lib.optionalString (stdenv.hostPlatform == stdenv.buildPlatform) ''
-    python -c 'import pytest'
   '';
 
   # disable stackprotector on aarch64-darwin for now

@@ -39,7 +39,8 @@
         pkgs.python3.pkgs.wheel
         # For text editor
         pkgs.python3.pkgs.jedi-language-server
-        pkgs.python3.pkgs.debugpy
+        # Currently broken
+        #pkgs.python3.pkgs.debugpy
       ];
       buildInputs = [
         pkgs.python3.pkgs.numpy.blas
@@ -49,7 +50,7 @@
       propagatedBuildInputs = [
         pkgs.python3.pkgs.numpy
       ];
-      checkInputs = [
+      nativeCheckInputs = [
         pkgs.python3.pkgs.nose
         pkgs.python3.pkgs.pytest
         pkgs.python3.pkgs.pytest-xdist
@@ -58,7 +59,7 @@
     in {
       devShells = {
         default = pkgs.mkShell {
-          inherit nativeBuildInputs buildInputs propagatedBuildInputs checkInputs;
+          inherit nativeBuildInputs buildInputs propagatedBuildInputs nativeCheckInputs;
         };
       };
       # Build each package with:
