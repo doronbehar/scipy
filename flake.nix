@@ -41,6 +41,8 @@
         pkgs.python3.pkgs.jedi-language-server
         # Currently broken
         #pkgs.python3.pkgs.debugpy
+        # To test debian packages
+        pkgs.dpkg
       ];
       buildInputs = [
         pkgs.python3.pkgs.numpy.blas
@@ -75,6 +77,53 @@
       python-armv7l-hf-multiplatform = pkgs.pkgsCross.armv7l-hf-multiplatform.python3.override {
         packageOverrides = pythonOverrides;
       };
+      # Mostly copied from https://github.com/juliosueiras-nix/nix-utils, only
+      # with support for specifying target package
+      deb-rpm-shared-buildPhase = {pkg, targetArch}: ''
+        export HOME=$PWD
+        mkdir -p ./nix/store/
+        mkdir -p ./bin
+        for item in "$(cat ${pkgs.lib.referencesByPopularity pkg})"; do
+          cp -r $item ./nix/store/
+        done
+
+        cp -r ${pkg}/bin/* ./bin/
+
+        chmod -R a+rwx ./nix
+        chmod -R a+rwx ./bin
+      '';
+      buildRPM = {pkg, targetArch}: pkgs.stdenv.mkDerivation {
+        name = "rpm-${pkg.name}";
+        buildInputs = [
+          pkgs.fpm
+          pkgs.rpm
+        ];
+        unpackPhase = true;
+        buildPhase = (deb-rpm-shared-buildPhase {inherit pkg targetArch;}) + ''
+          fpm -s dir -t rpm --name ${pkg.name} nix bin
+        '';
+
+        installPhase = ''
+          mkdir -p $out
+          cp -r *.rpm $out
+        '';
+      };
+      buildDeb = {pkg, targetArch}: pkgs.stdenv.mkDerivation {
+        name = "deb-${pkg.name}";
+        buildInputs = [
+          pkgs.fpm
+        ];
+        unpackPhase = true;
+        buildPhase = (deb-rpm-shared-buildPhase {inherit pkg targetArch;}) + ''
+          fpm -s dir -t deb --name ${pkg.name} nix bin
+        '';
+
+        installPhase = ''
+          mkdir -p $out
+          cp -r *.deb $out
+        '';
+      };
+
     in {
       devShells = {
         default = pkgs.mkShell {
@@ -96,6 +145,21 @@
           self.packages.${system}.scipy-armv7l-hf-multiplatform
         ]);
         meson-python = python.pkgs.meson-python;
+        pythonEnv-deb-native = buildDeb self.packages.${system}.pythonEnv;
+        pythonEnv-deb-armv7l-hf-multiplatform = buildDeb {
+          pkg = self.packages.${system}.pythonEnv;
+          targetArch = pkgs.stdenv.linuxArch;
+        };
+        # For testing debian bundling - evaluating scipy everytime requires
+        # submodules fetching etc and rebuilding scipy everytime. See also:
+        # https://github.com/NixOS/nix/issues/6633#issuecomment-1472479052
+        testEnv-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.withPackages(ps: [
+          ps.requests
+        ]);
+        testEnv-deb-armv7l-hf-multiplatform = buildDeb {
+          pkg = self.packages.${system}.pythonEnv;
+          targetArch = pkgs.stdenv.linuxArch;
+        };
       };
     }
   );
