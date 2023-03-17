@@ -61,7 +61,11 @@
       pythonOverrides = self: super: {
         meson-python = super.meson-python.overridePythonAttrs(old: {
           patches = [
-            ./meson-python-cross-compile-fix-nix.patch
+            # A fix for cross compilation https://github.com/mesonbuild/meson-python/pull/322
+            (pkgs.fetchpatch {
+              url = "https://github.com/mesonbuild/meson-python/commit/3678a77a7b6252e8fe8c984a3b2eba4b36d45417.patch";
+              hash = "sha256-UmcniQ8mRpDKWYTpx3PUOxGWhett81tf5jOqBPo+dak=";
+            })
           ];
         });
       };
