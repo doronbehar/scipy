@@ -23,11 +23,11 @@
       versionBase = "${versionAttrs.MAJOR}.${versionAttrs.MINOR}.${versionAttrs.MICRO}";
       # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
       version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
+      version = "${versionBase}-${version_rev}-flake";
       # For calling ./pkg.nix
       sharedBuildArgs = {
-        version = "${versionBase}-${version_rev}-flake";
         src = self;
-        inherit versionAttrs;
+        inherit version versionAttrs;
       };
       # The rest is mostly for the devShell
       nativeBuildInputs = [
@@ -71,57 +71,72 @@
           ];
         });
       };
-      python = pkgs.python3.override {
+      python = (pkgs.python3.override {
         packageOverrides = pythonOverrides;
-      };
-      python-armv7l-hf-multiplatform = pkgs.pkgsCross.armv7l-hf-multiplatform.python3.override {
+      }).overrideAttrs(old: {
+        meta = old.meta // {
+          description = "Python with a not-yet-released patch to meson-python";
+        };
+      });
+      python-armv7l-hf-multiplatform = (pkgs.pkgsCross.armv7l-hf-multiplatform.python3.override {
         packageOverrides = pythonOverrides;
-      };
+      }).overrideAttrs(old: {
+        meta = old.meta // {
+          description = "Python (cross compiled) with a not-yet-released patch to meson-python";
+        };
+      });
       # Mostly copied from https://github.com/juliosueiras-nix/nix-utils, only
       # with support for specifying target package
       deb-rpm-shared-buildPhase = {pkg, targetArch}: ''
         export HOME=$PWD
-        mkdir -p ./nix/store/
-        mkdir -p ./bin
-        for item in "$(cat ${pkgs.lib.referencesByPopularity pkg})"; do
-          cp -r $item ./nix/store/
+        mkdir -p pkgtree/nix/store/
+        mkdir -p pkgtree/bin
+        for item in "$(cat ${pkgs.referencesByPopularity pkg})"; do
+          cp -r $item pkgtree/nix/store/
         done
 
-        cp -r ${pkg}/bin/* ./bin/
+        cp -r ${pkg}/bin/* pkgtree/bin/
 
-        chmod -R a+rwx ./nix
-        chmod -R a+rwx ./bin
+        chmod -R a+rwx pkgtree/nix
+        chmod -R a+rwx pkgtree/bin
       '';
+      # TODO: Actually support changing the architecture after
       buildRPM = {pkg, targetArch}: pkgs.stdenv.mkDerivation {
-        name = "rpm-${pkg.name}";
+        name = "${pkg.name}.rpm";
         buildInputs = [
-          pkgs.fpm
           pkgs.rpm
         ];
-        unpackPhase = true;
+        unpackPhase = "true";
         buildPhase = (deb-rpm-shared-buildPhase {inherit pkg targetArch;}) + ''
-          fpm -s dir -t rpm --name ${pkg.name} nix bin
+          # TODO: Implement this
         '';
-
         installPhase = ''
-          mkdir -p $out
-          cp -r *.rpm $out
+          # TODO: Implement this
         '';
       };
       buildDeb = {pkg, targetArch}: pkgs.stdenv.mkDerivation {
-        name = "deb-${pkg.name}";
+        name = "${pkg.name}.deb";
         buildInputs = [
-          pkgs.fpm
+          pkgs.dpkg
         ];
-        unpackPhase = true;
+        unpackPhase = "true";
         buildPhase = (deb-rpm-shared-buildPhase {inherit pkg targetArch;}) + ''
-          fpm -s dir -t deb --name ${pkg.name} nix bin
+          mkdir pkgtree/DEBIAN
+          cat << EOF > pkgtree/DEBIAN/control
+          Package: ${pkg.name}
+          Version: ${version}
+          Maintainer: "Scipy developers"
+          Architecture: ${targetArch}
+          Description: ${pkg.meta.description}
+          EOF
         '';
-
         installPhase = ''
-          mkdir -p $out
-          cp -r *.deb $out
+          dpkg-deb -b pkgtree
+          mv pkgtree.deb $out
         '';
+        meta = {
+          description = "Debian package of ${pkg.name} compiled for architecture ${targetArch}";
+        };
       };
 
     in {
@@ -138,28 +153,24 @@
         });
         scipy-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
         });
-        pythonEnv = python.withPackages(ps: [
+        pythonEnv = (python.withPackages(ps: [
           self.packages.${system}.scipy
-        ]);
-        pythonEnv-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.withPackages(ps: [
+        ])).overrideAttrs (old: {
+          meta = old.meta // {
+            description = "Python environment including ${self.packages.${system}.scipy.name}";
+          };
+        });
+        pythonEnv-armv7l-hf-multiplatform = (python-armv7l-hf-multiplatform.withPackages(ps: [
           self.packages.${system}.scipy-armv7l-hf-multiplatform
-        ]);
-        meson-python = python.pkgs.meson-python;
-        pythonEnv-deb-native = buildDeb self.packages.${system}.pythonEnv;
-        pythonEnv-deb-armv7l-hf-multiplatform = buildDeb {
-          pkg = self.packages.${system}.pythonEnv;
-          targetArch = pkgs.stdenv.linuxArch;
-        };
-        # For testing debian bundling - evaluating scipy everytime requires
-        # submodules fetching etc and rebuilding scipy everytime. See also:
-        # https://github.com/NixOS/nix/issues/6633#issuecomment-1472479052
-        testEnv-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.withPackages(ps: [
-          ps.requests
-        ]);
-        testEnv-deb-armv7l-hf-multiplatform = buildDeb {
-          pkg = self.packages.${system}.pythonEnv;
-          targetArch = pkgs.stdenv.linuxArch;
-        };
+        ])).overrideAttrs (old: {
+          meta = old.meta // {
+            description = "Python (cross compiled) environment including ${self.packages.${system}.scipy.name}";
+          };
+        });
+        inherit
+          python
+          python-armv7l-hf-multiplatform
+        ;
       };
     }
   );
