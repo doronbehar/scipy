@@ -99,7 +99,7 @@ CONFIG = _cleanup(
         },
         "Python Information": {
             "path": r"@HOST_PYTHON_PATH@",
-            "version": "@PYTHON_VERSION@",
+            "version": "@HOST_PYTHON_VERSION@",
         },
     }
 )
