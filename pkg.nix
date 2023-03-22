@@ -5,6 +5,8 @@
 , versionAttrs
 , buildPackages
 , writeText
+# Take a long time
+, doCheck ? false
 , python
 , pythonOlder
 , buildPythonPackage
@@ -111,7 +113,7 @@ in buildPythonPackage {
 
   nativeCheckInputs = [ nose pytest pytest-xdist ];
 
-  doCheck = !(stdenv.isx86_64 && stdenv.isDarwin);
+  inherit doCheck;
 
   preConfigure = ''
     sed -i '0,/from numpy.distutils.core/s//import setuptools;from numpy.distutils.core/' setup.py

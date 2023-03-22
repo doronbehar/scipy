@@ -151,8 +151,12 @@
       packages = {
         scipy = python.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
         });
+        scipy-tested = self.packages.${system}.scipy.override {
+          doCheck = true;
+        };
         scipy-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
         });
+        # No cross compiled tested scipy ofcourse
         pythonEnv = (python.withPackages(ps: [
           self.packages.${system}.scipy
         ])).overrideAttrs (old: {
@@ -165,6 +169,23 @@
         ])).overrideAttrs (old: {
           meta = old.meta // {
             description = "Python (cross compiled) environment including ${self.packages.${system}.scipy.name}";
+          };
+        });
+        pythonEnv-armv7l-hf-multiplatform-with-tests = (python-armv7l-hf-multiplatform.withPackages(ps: [
+          self.packages.${system}.scipy-armv7l-hf-multiplatform
+          python-armv7l-hf-multiplatform.pkgs.pytest
+          python-armv7l-hf-multiplatform.pkgs.pytest-cov
+          python-armv7l-hf-multiplatform.pkgs.pytest-timeout
+          python-armv7l-hf-multiplatform.pkgs.pytest-xdist
+          python-armv7l-hf-multiplatform.pkgs.asv
+          python-armv7l-hf-multiplatform.pkgs.mpmath
+          python-armv7l-hf-multiplatform.pkgs.gmpy2
+          python-armv7l-hf-multiplatform.pkgs.threadpoolctl
+          python-armv7l-hf-multiplatform.pkgs.scikit-umfpack
+          python-armv7l-hf-multiplatform.pkgs.pooch
+        ])).overrideAttrs (old: {
+          meta = old.meta // {
+            description = "Python (cross compiled) environment including ${self.packages.${system}.scipy.name} and other testing dependencies";
           };
         });
         inherit
@@ -181,6 +202,10 @@
         };
         pythonEnv-deb-armv7l-hf-multiplatform = buildDeb {
           pkg = self.packages.${system}.pythonEnv-armv7l-hf-multiplatform;
+          targetArch = "armhf";
+        };
+        pythonEnv-deb-armv7l-hf-multiplatform-with-tests = buildDeb {
+          pkg = self.packages.${system}.pythonEnv-armv7l-hf-multiplatform-with-tests;
           targetArch = "armhf";
         };
       };
