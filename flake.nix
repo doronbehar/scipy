@@ -177,12 +177,13 @@
           python-armv7l-hf-multiplatform.pkgs.pytest-cov
           python-armv7l-hf-multiplatform.pkgs.pytest-timeout
           python-armv7l-hf-multiplatform.pkgs.pytest-xdist
-          python-armv7l-hf-multiplatform.pkgs.asv
           python-armv7l-hf-multiplatform.pkgs.mpmath
           python-armv7l-hf-multiplatform.pkgs.gmpy2
           python-armv7l-hf-multiplatform.pkgs.threadpoolctl
-          python-armv7l-hf-multiplatform.pkgs.scikit-umfpack
           python-armv7l-hf-multiplatform.pkgs.pooch
+          # This is missing from Nixpkgs at the moment
+          #python-armv7l-hf-multiplatform.pkgs.scikit-umfpack
+          #python-armv7l-hf-multiplatform.pkgs.asv
         ])).overrideAttrs (old: {
           meta = old.meta // {
             description = "Python (cross compiled) environment including ${self.packages.${system}.scipy.name} and other testing dependencies";
