@@ -40,9 +40,11 @@
         # For text editor
         pkgs.python3.pkgs.jedi-language-server
         # Currently broken
-        #pkgs.python3.pkgs.debugpy
+        pkgs.python3.pkgs.debugpy
         # To test debian packages
         pkgs.dpkg
+        # To run `./dev.py`
+        python.pkgs.pydevtool
       ];
       buildInputs = [
         pkgs.python3.pkgs.numpy.blas
