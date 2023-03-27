@@ -190,6 +190,8 @@
           # This is missing from Nixpkgs at the moment
           #python-armv7l-hf-multiplatform.pkgs.scikit-umfpack
           #python-armv7l-hf-multiplatform.pkgs.asv
+          python-armv7l-hf-multiplatform.pkgs.pydevtool
+          python-armv7l-hf-multiplatform.pkgs.rich-click
         ])).overrideAttrs (old: {
           meta = old.meta // {
             description = "Python (cross compiled) environment including ${self.packages.${system}.scipy.name} and other testing dependencies";
