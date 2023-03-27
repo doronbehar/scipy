@@ -58,9 +58,9 @@
         pkgs.python3.pkgs.pytest-xdist
         pkgs.python3.pkgs.pooch
       ];
-      # Override python packages, see:
-      # https://github.com/mesonbuild/meson-python/issues/321
+      # generate a `python` interpreter, with some python packages overriden
       pythonOverrides = self: super: {
+        # See https://github.com/mesonbuild/meson-python/issues/321
         meson-python = super.meson-python.overridePythonAttrs(old: {
           patches = [
             # A fix for cross compilation https://github.com/mesonbuild/meson-python/pull/322
@@ -70,6 +70,8 @@
             })
           ];
         });
+        # TODO: Add to nixpkgs
+        pydevtool = super.python.pkgs.callPackage ./pydevtool.nix { };
       };
       python = (pkgs.python3.override {
         packageOverrides = pythonOverrides;
@@ -138,7 +140,6 @@
           description = "Debian package of ${pkg.name} compiled for architecture ${targetArch}";
         };
       };
-
     in {
       devShells = {
         default = pkgs.mkShell {
