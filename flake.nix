@@ -146,7 +146,9 @@
     in {
       devShells = {
         default = pkgs.mkShell {
-          inherit nativeBuildInputs buildInputs propagatedBuildInputs nativeCheckInputs;
+          inherit buildInputs propagatedBuildInputs;
+          # nativeCheckInputs is not evaluated by pkgs.mkShell
+          nativeBuildInputs = nativeBuildInputs ++ nativeCheckInputs;
         };
       };
       # Build each package with:
