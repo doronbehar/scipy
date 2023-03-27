@@ -44,7 +44,8 @@
         # To test debian packages
         pkgs.dpkg
         # To run `./dev.py`
-        python.pkgs.pydevtool
+        python.pkgs.pydevtool # Not available in Nixos/Nixpkgs
+        pkgs.python3.pkgs.rich-click
       ];
       buildInputs = [
         pkgs.python3.pkgs.numpy.blas
