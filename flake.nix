@@ -124,6 +124,7 @@
         # TODO: Add to nixpkgs
         pydevtool = super.python.pkgs.callPackage ./pydevtool.nix { };
         scipy = super.python.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
+          inherit (self) meson-python;
         });
         scipy-tested = self.scipy.override {
           doCheck = true;
