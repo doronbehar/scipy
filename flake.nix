@@ -75,19 +75,24 @@
         });
         # TODO: Add to nixpkgs
         pydevtool = super.python.pkgs.callPackage ./pydevtool.nix { };
+        scipy = super.python.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
+        });
+        scipy-tested = self.scipy.override {
+          doCheck = true;
+        };
       };
       python = (pkgs.python3.override {
         packageOverrides = pythonOverrides;
       }).overrideAttrs(old: {
         meta = old.meta // {
-          description = "Python with a not-yet-released patch to meson-python";
+          description = "Python with a current scipy and patched meson-python";
         };
       });
       python-armv7l-hf-multiplatform = (pkgs.pkgsCross.armv7l-hf-multiplatform.python3.override {
         packageOverrides = pythonOverrides;
       }).overrideAttrs(old: {
         meta = old.meta // {
-          description = "Python (cross compiled) with a not-yet-released patch to meson-python";
+          description = "Python (cross compiled) with current scipy and patched meson-python";
         };
       });
       # Mostly copied from https://github.com/juliosueiras-nix/nix-utils, only
@@ -155,13 +160,11 @@
       #
       #     nix build -L .?submodules=1\#$PKG
       packages = {
-        scipy = python.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
-        });
-        scipy-tested = self.packages.${system}.scipy.override {
-          doCheck = true;
-        };
-        scipy-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.pkgs.callPackage ./pkg.nix (sharedBuildArgs // {
-        });
+        inherit (python.pkgs)
+          scipy
+          scipy-tested
+        ;
+        scipy-armv7l-hf-multiplatform = python-armv7l-hf-multiplatform.pkgs.scipy;
         # No cross compiled tested scipy ofcourse
         pythonEnv = (python.withPackages(ps: [
           self.packages.${system}.scipy
