@@ -13,7 +13,6 @@
 , ninja
 , cython
 , gfortran
-, meson
 , meson-python
 , pkg-config
 , pythran
