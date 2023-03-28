@@ -15,6 +15,7 @@
 , cython
 , gfortran
 , meson-python
+, meson
 , pkg-config
 , pythran
 , wheel
@@ -99,7 +100,7 @@ in buildPythonPackage {
   '';
   # NIX_DEBUG=6;
 
-  nativeBuildInputs = [ ninja cython gfortran meson-python pythran pkg-config wheel ];
+  nativeBuildInputs = [ ninja cython gfortran meson meson-python pythran pkg-config wheel ];
 
   buildInputs = [
     numpy.blas
