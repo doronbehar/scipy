@@ -162,7 +162,14 @@
         };
       };
       lib = {
-        inherit buildDeb;
+        inherit
+          buildDeb
+          # From some reason, applying multiple packageOverrides on a python
+          # interpreter applies only the latest packageOverrides (TODO: Open a
+          # nixpkgs issue about this). Hence, we need to let other users of
+          # this flake the ability to do the same as us in their `flake.nix`.
+          pythonOverrides
+        ;
       };
       # Build each package with:
       #
