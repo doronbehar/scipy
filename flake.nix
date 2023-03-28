@@ -136,6 +136,11 @@
           Package: ${pkg.name}
           Version: ${version}
           Maintainer: "Scipy developers"
+        ''
+        # TODO: Ideally we would parse `pkgs.stdenv.gcc.arch` or a similar
+        # attribute and use this argument such that dpkg-deb will be
+        # satisfied with our name of the platform.
+        + ''
           Architecture: ${targetArch}
           Description: ${pkg.meta.description}
           EOF
@@ -155,6 +160,9 @@
           # nativeCheckInputs is not evaluated by pkgs.mkShell
           nativeBuildInputs = nativeBuildInputs ++ nativeCheckInputs;
         };
+      };
+      lib = {
+        inherit buildDeb;
       };
       # Build each package with:
       #
@@ -207,9 +215,6 @@
         # Debian packages
         pythonEnv-deb-native = buildDeb {
           pkg = self.packages.${system}.pythonEnv;
-          # TODO: Ideally we would parse `pkgs.stdenv.gcc.arch` or a similar
-          # attribute and use this argument such that dpkg-deb will be
-          # satisfied with our name of the platform.
           targetArch = "amd64";
         };
         pythonEnv-deb-armv7l-hf-multiplatform = buildDeb {
