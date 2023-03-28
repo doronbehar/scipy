@@ -3,10 +3,40 @@
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
+  # Using ?submodules=1 is annoying, and takes too long when one uses this
+  # flake as a dependency with `url = "git+..."`. This UX is under work in Nix.
+  # Unfortunately, we have to manually edit the revisions in those URLs to
+  # match those in .git/modules/<submodule-path>/HEAD
+  inputs.propack = {
+    url = "github:scipy/PROPACK/cc32f3ba6cf941e4f9f96d96e2fc5762ea0c1014";
+    flake = false;
+  };
+  inputs.unuran = {
+    url = "github:scipy/unuran/a63d39160e5ecc4402e7ed0e8417f4c3ff9634cb";
+    flake = false;
+  };
+  inputs.highs = {
+    url = "github:scipy/highs/4a122958a82e67e725d08153e099efe4dad099a2";
+    flake = false;
+  };
+  inputs.boost_math = {
+    url = "github:boostorg/math/7203fa2def6347b0d5f8fe1e8522d5b0a618db9d";
+    flake = false;
+  };
+  inputs.gitignore = {
+    url = "github:hercules-ci/gitignore.nix";
+    # Use the same nixpkgs
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   outputs = { self
     , nixpkgs
     , flake-utils
+    , propack
+    , unuran
+    , highs
+    , boost_math
+    , gitignore
   }:
   flake-utils.lib.eachDefaultSystem (system:
     let
@@ -25,9 +55,27 @@
       version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
       version = "${versionBase}-${version_rev}-flake";
       # For calling ./pkg.nix
+      inherit (gitignore.lib) gitignoreFilterWith;
       sharedBuildArgs = {
-        src = self;
+        src = lib.cleanSourceWith {
+          filter = gitignoreFilterWith {
+            basePath = ./.;
+            extraRules = ''
+              flake*
+              ./azure-pipelines.yml
+              ./ci/*
+            '';
+          };
+          src = ./.;
+        };
         inherit version versionAttrs;
+        submodules = { 
+          # Ideally this would have been parsed by .gitmodules
+          "scipy/sparse/linalg/_propack/PROPACK" = propack;
+          "scipy/_lib/unuran" = unuran;
+          "scipy/_lib/highs" = highs;
+          "scipy/_lib/boost_math" = boost_math;
+        };
       };
       # The rest is mostly for the devShell
       nativeBuildInputs = [

@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "boost_math": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1677176150,
+        "narHash": "sha256-IC+27ayKligeYeRmQn0U8CL12SJKmFyV38GCDW2+r6M=",
+        "owner": "boostorg",
+        "repo": "math",
+        "rev": "7203fa2def6347b0d5f8fe1e8522d5b0a618db9d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "boostorg",
+        "repo": "math",
+        "rev": "7203fa2def6347b0d5f8fe1e8522d5b0a618db9d",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "locked": {
         "lastModified": 1678901627,
@@ -12,6 +29,43 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "gitignore": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1660459072,
+        "narHash": "sha256-8DFJjXG8zqoONA1vXtgeKXy68KdJL5UaXR8NtVMUbx8=",
+        "owner": "hercules-ci",
+        "repo": "gitignore.nix",
+        "rev": "a20de23b925fd8264fd7fad6454652e142fd7f73",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "gitignore.nix",
+        "type": "github"
+      }
+    },
+    "highs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1658162848,
+        "narHash": "sha256-XH88TvH6R2G8Q5JJV2rUzKr8QHwC9gI0j6CE8gO9Ff4=",
+        "owner": "scipy",
+        "repo": "highs",
+        "rev": "4a122958a82e67e725d08153e099efe4dad099a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "scipy",
+        "repo": "highs",
+        "rev": "4a122958a82e67e725d08153e099efe4dad099a2",
         "type": "github"
       }
     },
@@ -31,10 +85,49 @@
         "type": "github"
       }
     },
+    "propack": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1660102512,
+        "narHash": "sha256-JKH56lpNGNBOYX2r2r6kCmR7c2H2notDzfOOhCgKIW4=",
+        "owner": "scipy",
+        "repo": "PROPACK",
+        "rev": "cc32f3ba6cf941e4f9f96d96e2fc5762ea0c1014",
+        "type": "github"
+      },
+      "original": {
+        "owner": "scipy",
+        "repo": "PROPACK",
+        "rev": "cc32f3ba6cf941e4f9f96d96e2fc5762ea0c1014",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
+        "boost_math": "boost_math",
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "gitignore": "gitignore",
+        "highs": "highs",
+        "nixpkgs": "nixpkgs",
+        "propack": "propack",
+        "unuran": "unuran"
+      }
+    },
+    "unuran": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1652345427,
+        "narHash": "sha256-2FWyyX+lu8lgisijJUjkK6P6xDokA8BkmioWOhhihNo=",
+        "owner": "scipy",
+        "repo": "unuran",
+        "rev": "a63d39160e5ecc4402e7ed0e8417f4c3ff9634cb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "scipy",
+        "repo": "unuran",
+        "rev": "a63d39160e5ecc4402e7ed0e8417f4c3ff9634cb",
+        "type": "github"
       }
     }
   },

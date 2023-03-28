@@ -3,6 +3,7 @@
 , src
 , version
 , versionAttrs
+, submodules
 , buildPackages
 , writeText
 # Take a long time
@@ -114,7 +115,13 @@ in buildPythonPackage {
 
   inherit doCheck;
 
-  preConfigure = ''
+  # Not needed on a Nixpkgs evaluation
+  preConfigure = builtins.concatStringsSep "\n" (lib.mapAttrsToList (path: src: ''
+    # Create leading directories before copying
+    mkdir -p ${path} && rmdir ${path}
+    cp -r ${src} ${path}
+  '') submodules)
+  + ''
     sed -i '0,/from numpy.distutils.core/s//import setuptools;from numpy.distutils.core/' setup.py
     export NPY_NUM_BUILD_JOBS=$NIX_BUILD_CORES
   '';
