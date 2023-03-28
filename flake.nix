@@ -220,9 +220,6 @@
           pythonOverrides
         ;
       };
-      # Build each package with:
-      #
-      #     nix build -L .?submodules=1\#$PKG
       packages = {
         inherit (python.pkgs)
           scipy
