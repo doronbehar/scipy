@@ -92,7 +92,7 @@
         # To test debian packages
         pkgs.dpkg
         # To run `./dev.py`
-        python.pkgs.pydevtool # Not available in Nixos/Nixpkgs
+        python.pkgs.pydevtool # See https://nixpk.gs/pr-tracker.html?pr=224484
         pkgs.python3.pkgs.rich-click
       ];
       buildInputs = [
