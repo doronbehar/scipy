@@ -10,7 +10,7 @@
   inputs.propack = {
     # For Vim, run:
     # :read .git/modules/scipy/sparse/linalg/_propack/PROPACK/HEAD
-    url = "github:scipy/PROPACK/cc32f3ba6cf941e4f9f96d96e2fc5762ea0c1014";
+    url = "github:scipy/PROPACK/96f6800451372dd003e627bbfd732937ac0c685e";
     flake = false;
   };
   inputs.unuran = {
@@ -28,7 +28,7 @@
   inputs.boost_math = {
     # For Vim, run:
     # :read .git/modules/scipy/_lib/boost_math/HEAD
-    url = "github:boostorg/math/7203fa2def6347b0d5f8fe1e8522d5b0a618db9d";
+    url = "github:boostorg/math/6bfe5818acdf86432f3e1a78ec5e1d3cdb8c6480";
     flake = false;
   };
   inputs.gitignore = {

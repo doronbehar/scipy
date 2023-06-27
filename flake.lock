@@ -3,17 +3,17 @@
     "boost_math": {
       "flake": false,
       "locked": {
-        "lastModified": 1677176150,
-        "narHash": "sha256-IC+27ayKligeYeRmQn0U8CL12SJKmFyV38GCDW2+r6M=",
+        "lastModified": 1685518780,
+        "narHash": "sha256-0k6swbAJPq5a4OBaXFrlQfvCMj1lwjBbeFmIwgyq8Yg=",
         "owner": "boostorg",
         "repo": "math",
-        "rev": "7203fa2def6347b0d5f8fe1e8522d5b0a618db9d",
+        "rev": "6bfe5818acdf86432f3e1a78ec5e1d3cdb8c6480",
         "type": "github"
       },
       "original": {
         "owner": "boostorg",
         "repo": "math",
-        "rev": "7203fa2def6347b0d5f8fe1e8522d5b0a618db9d",
+        "rev": "6bfe5818acdf86432f3e1a78ec5e1d3cdb8c6480",
         "type": "github"
       }
     },
@@ -91,17 +91,17 @@
     "propack": {
       "flake": false,
       "locked": {
-        "lastModified": 1660102512,
-        "narHash": "sha256-JKH56lpNGNBOYX2r2r6kCmR7c2H2notDzfOOhCgKIW4=",
+        "lastModified": 1683204081,
+        "narHash": "sha256-mByuJuev0ca+kT8deq8bdDlHZsfMQHeQn4Tktu0nraU=",
         "owner": "scipy",
         "repo": "PROPACK",
-        "rev": "cc32f3ba6cf941e4f9f96d96e2fc5762ea0c1014",
+        "rev": "96f6800451372dd003e627bbfd732937ac0c685e",
         "type": "github"
       },
       "original": {
         "owner": "scipy",
         "repo": "PROPACK",
-        "rev": "cc32f3ba6cf941e4f9f96d96e2fc5762ea0c1014",
+        "rev": "96f6800451372dd003e627bbfd732937ac0c685e",
         "type": "github"
       }
     },
