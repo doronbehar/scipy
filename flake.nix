@@ -8,18 +8,26 @@
   # Unfortunately, we have to manually edit the revisions in those URLs to
   # match those in .git/modules/<submodule-path>/HEAD
   inputs.propack = {
+    # For Vim, run:
+    # :read .git/modules/scipy/sparse/linalg/_propack/PROPACK/HEAD
     url = "github:scipy/PROPACK/cc32f3ba6cf941e4f9f96d96e2fc5762ea0c1014";
     flake = false;
   };
   inputs.unuran = {
+    # For Vim, run:
+    # :read .git/modules/scipy/_lib/unuran/HEAD
     url = "github:scipy/unuran/a63d39160e5ecc4402e7ed0e8417f4c3ff9634cb";
     flake = false;
   };
   inputs.highs = {
+    # For Vim, run:
+    # :read .git/modules/HiGHS/HEAD
     url = "github:scipy/highs/4a122958a82e67e725d08153e099efe4dad099a2";
     flake = false;
   };
   inputs.boost_math = {
+    # For Vim, run:
+    # :read .git/modules/scipy/_lib/boost_math/HEAD
     url = "github:boostorg/math/7203fa2def6347b0d5f8fe1e8522d5b0a618db9d";
     flake = false;
   };
